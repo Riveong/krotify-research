@@ -2,6 +2,10 @@
     import Nav from "../nav.svelte";
 
     let selectedNumbers = Array(40).fill(0);
+    let name;
+    let umur;
+    let gender;
+    let path;
     let questions = [
     "AS1 Anda adalah seorang yang suka mengekspresikan diri.",
     "AS2 Anda adalah seorang yang suka mencoba memimpin orang.",
@@ -45,6 +49,44 @@
     "DO10 Anda adalah seorang yang suka membuat orang lain dibawah tekanan"
 ];
 
+    async function submit(){
+        name = document.getElementById("name").value;
+        umur = document.getElementById("umur").value;
+        gender = document.getElementById("gender").value;
+        umur = parseInt(umur);
+        gender = parseInt(gender);
+        console.log(name);
+        console.log(umur);
+        console.log(gender);
+        console.log(selectedNumbers);
+
+        if (selectedNumbers.some(number => number === null || number === 0)) {
+        alert("Mohon isi semua questioneer survey sebelum melanjutkan");
+        return; // Stop the function execution here
+    }
+
+        const data = {
+            "answers":selectedNumbers,
+            "age":umur,
+            "gender":gender
+        };
+
+
+        try {
+        const response = await fetch('http://127.0.0.1:8000/run_matchmaking', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        sessionStorage.setItem('apiResponse', JSON.stringify(responseData)); // Save to session storage
+        window.location.href = './mab-persona/results'; // Redirect to the results page using window.location
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
     function selectNumber(number, index) {
         selectedNumbers[index] = number;
         selectedNumbers = selectedNumbers.slice();
@@ -81,6 +123,7 @@
         font-weight: bold;
         transition: background-color 0.3s; /* Smooth transition for background color */
         border-radius: 20px;
+        border: 2px solid black;
 
     }
     .number-display {
@@ -97,6 +140,16 @@
     input{
         width: 80%;
         padding: 12px 20px;
+    }
+    .submit{
+        padding: 10px 20px;
+        font-size: 15px;
+        border: 2px solid black;
+
+    }
+    .gender{
+        padding: 20px 20px;
+        font-size: 15px;
     }
 
 
@@ -116,9 +169,14 @@
     <h1>1. Data diri</h1>
     <b>Isi data diri anda</b>
     <p>Nama (boleh samaran)</p>
-    <input />
+    <input id="name" placeholder="Enter name"/>
     <p>Umur</p>
-    <input />
+    <input id="umur" placeholder="Enter age"/>
+    <p>Gender<br></p>
+    <select class = "gender" id="gender" name="gender">
+        <option value="1">Male</option>
+        <option value="2">Female</option>
+    </select>
     <p>Kontak<br>(dapat berupa ig, email, no hp, dll, dapat dilewati apabila tidak berkenan mendapatkan hadiah undian)</p>
     <input />
     <h1>2. Survey</h1>
@@ -154,7 +212,9 @@
     </div>
 {/each}
 </div>
-
+<center>
+    <button class = "submit" on:click={submit}> Submit</button>
+</center>
 <h2>Answers:</h2>
 <ul>
     {#each selectedNumbers as number, index}
