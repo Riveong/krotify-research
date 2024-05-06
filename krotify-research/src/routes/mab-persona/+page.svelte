@@ -5,7 +5,7 @@
     let name;
     let umur;
     let gender;
-    let path;
+    
     let questions = [
     "AS1 Anda adalah seorang yang suka mengekspresikan diri.",
     "AS2 Anda adalah seorang yang suka mencoba memimpin orang.",
@@ -49,6 +49,7 @@
     "DO10 Anda adalah seorang yang suka membuat orang lain dibawah tekanan"
 ];
 
+
     async function submit(){
         name = document.getElementById("name").value;
         umur = document.getElementById("umur").value;
@@ -64,6 +65,13 @@
         alert("Mohon isi semua questioneer survey sebelum melanjutkan");
         return; // Stop the function execution here
     }
+
+        const survey = {
+            "nama":name,
+            "umur":umur,
+            "gender":gender,
+            "answer":selectedNumbers
+        }
 
         const data = {
             "answers":selectedNumbers,
@@ -82,6 +90,8 @@
         });
         const responseData = await response.json();
         sessionStorage.setItem('apiResponse', JSON.stringify(responseData)); // Save to session storage
+        sessionStorage.setItem('dataStoreMAB', JSON.stringify(survey)); // Save to session storage
+
         window.location.href = './mab-persona/results'; // Redirect to the results page using window.location
     } catch (error) {
         console.error('Error:', error);
@@ -215,9 +225,3 @@
 <center>
     <button class = "submit" on:click={submit}> Submit</button>
 </center>
-<h2>Answers:</h2>
-<ul>
-    {#each selectedNumbers as number, index}
-        <li>Set {index + 1}: {number}</li>
-    {/each}
-</ul>
