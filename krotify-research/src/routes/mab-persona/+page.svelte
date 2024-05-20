@@ -1,6 +1,6 @@
 <script>
     import Nav from "../nav.svelte";
-    
+    let isLoading = false;
     let selectedNumbers = Array(40).fill(0);
     let name;
     let umur;
@@ -51,6 +51,7 @@
 
 
     async function submit(){
+        isLoading = true;
         name = document.getElementById("name").value;
         umur = document.getElementById("umur").value;
         gender = document.getElementById("gender").value;
@@ -81,6 +82,7 @@
 
 
         try {
+            
         const response = await fetch('http://35.224.220.252/run_matchmaking', {
             method: 'POST',
             headers: {
@@ -161,11 +163,29 @@
         padding: 20px 20px;
         font-size: 15px;
     }
+    
 
 
 </style>
 
 <Nav />
+{#if isLoading}
+    <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        text-align: center;
+        line-height: 100vh;
+        font-size: 1.5em;
+        z-index: 1000;
+    ">
+        Loading, please wait...
+    </div>
+{/if}
 <center>
     <h1>Matchmaking System Between <br>Student and Teacher
         with Multi Armed Bandits</h1>
