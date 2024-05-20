@@ -45,7 +45,7 @@
       "reward":fdataHS
     }
     try {
-      const response = await fetch('http://127.0.0.1:8000/submit-data/', {
+      const response = await fetch(`${host}submit-data/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -168,7 +168,7 @@
   async function find_sim(id) {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/search_similarity/${id}`,
+        `${host}search_similarity/${id}`,
       );
       const responseData = await response.json();
       return responseData.data;
@@ -179,7 +179,7 @@
 
   async function find_data(id) {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/search_data/${id}`);
+      const response = await fetch(`${host}search_data/${id}`);
       const responseData = await response.json();
       return responseData.data;
     } catch (err) {

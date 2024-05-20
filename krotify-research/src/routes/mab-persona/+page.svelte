@@ -1,10 +1,12 @@
 <script>
     import Nav from "../nav.svelte";
+    require('dotenv').config();
 
     let selectedNumbers = Array(40).fill(0);
     let name;
     let umur;
     let gender;
+    const host = process.env.HOST;
     
     let questions = [
     "AS1 Anda adalah seorang yang suka mengekspresikan diri.",
@@ -81,7 +83,7 @@
 
 
         try {
-        const response = await fetch('http://127.0.0.1:8000/run_matchmaking', {
+        const response = await fetch(`${host}run_matchmakin`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
