@@ -7,6 +7,8 @@
   let dataEpSim = null;
   let dataTp = null;
   let dataTpSim = null;
+  let dataLn = null;
+  let dataLnSim = null;
   let userData;
   let nama;
   let umur;
@@ -16,13 +18,16 @@
 
   let epsilonGreedyRating = null;
   let thompsonSamplingRating = null;
+  let linearRating = null;
 
   async function endAll(){
     const fdataEp = await dataEpSim;
     const fdataTs = await dataTpSim;
+    const fdataLn = await dataLnSim;
+    const fdataHS = await [data.data[0].epsilon_reward,data.data[1].thompson_reward,data.data[2].lin_greedy_reward];
 
       // Check if at least one rating has been given
-  if (epsilonGreedyRating === null && thompsonSamplingRating === null) {
+  if (epsilonGreedyRating === null && thompsonSamplingRating === null && linearRating == null) {
     // Alert the user if no ratings have been provided
     alert("Mohon isi beri rating setidaknya salah satu saja");
     return; // Stop the function from proceeding further
@@ -34,8 +39,10 @@
       "gender":gender,
       "epsilon_greedy_id":fdataEp[2],
       "thompson_sampling_id":fdataTs[2],
+      "linear_id":fdataLn[2],
       "user_input":answers,
-      "rating":[epsilonGreedyRating,thompsonSamplingRating]
+      "rating":[epsilonGreedyRating,thompsonSamplingRating,linearRating],
+      "reward":fdataHS
     }
     try {
       const response = await fetch('http://127.0.0.1:8000/submit-data/', {
@@ -65,8 +72,10 @@
       epsilonGreedyRating = rating;
     } else if (algorithm === 'thompson') {
       thompsonSamplingRating = rating;
-    }
+    } else if (algorithm === 'linear') {
+      linearRating = rating;
   }
+}
   const questions = [
     "suka mengekspresikan diri.",
     "suka mencoba memimpin orang.",
@@ -135,6 +144,10 @@
       );
       dataTpSim = find_sim(
         findMostFrequentValue(data.data[1].thompson_sampling)[0],
+      );
+      dataLn = find_data(findMostFrequentValue(data.data[2].lin_greedy)[0]);
+      dataLnSim = find_sim(
+        findMostFrequentValue(data.data[2].lin_greedy)[0],
       );
     }
   });
@@ -234,7 +247,7 @@
       </button>
 
     </div>
-
+    
     <div class="card-ts">
       <h2 style="color: white;">Guru Thompson Sampling</h2>
       <p style="color: white;">
@@ -246,7 +259,6 @@
         <p>Loading...</p>
       {:then dataTp}
       <b style="color: white;">Karakter yang kuat:</b>
-
         {#each filterQuestions(dataTp, questions) as question}
           <span class="question-card">
               + {question}
@@ -273,6 +285,52 @@
         👎
       </button>
     </div>
+
+
+    <div class="card-lg">
+      <h2 style="color: white;">Guru Linear Greedy</h2>
+      <p style="color: white;">
+        {findMostFrequentValue(data.data[2].lin_greedy)[0]} (Appeared {findMostFrequentValue(
+          data.data[2].lin_greedy,
+        )[1]} times)
+      </p>
+      {#await dataLn}
+        <p>Loading...</p>
+      {:then dataLn}
+      <b style="color: white;">Karakter yang kuat:</b>
+
+        {#each filterQuestions(dataLn, questions) as question}
+          <span class="question-card">
+              + {question}
+          </span>
+        {/each}
+      {/await}
+      {#await dataLnSim}
+        <p>Loading...</p>
+      {:then dataLnSim}
+        <p style="color: white;"><b>Persentase Similaritas: </b>{dataLnSim[3]}</p>
+      {/await}
+      <button
+      class:default={linearRating === null}
+      class:liked={linearRating === 1}
+      class:passive={linearRating === 0}
+      on:click={() => setRating('linear', 1)}>
+      👍
+    </button>
+    <button
+      class:default={linearRating === null}
+      class:passive={linearRating === 1}
+      class:disliked={linearRating === 0}
+      on:click={() => setRating('linear', 0)}>
+      👎
+    </button>
+      
+      </div>
+
+
+
+
+    
 <center>    
   <button class="end" on:click={endAll}>Selesai</button>
 </center>
@@ -299,6 +357,16 @@
       </p>
     </div>
     <div class="card">
+      <h2>Most Frequent Matchmaking Value (Linear Greedy)</h2>
+      <p>
+        Most Frequent Value: {findMostFrequentValue(
+          data.data[2].lin_greedy,
+        )[0]} (Appeared {findMostFrequentValue(
+          data.data[2].lin_greedy,
+        )[1]} times)
+      </p>
+    </div>
+    <div class="card">
       <h2>Matchmaking Results (Epsilon-Greedy Algorithm)</h2>
       <p>Reward Value: {data.data[0].epsilon_reward}</p>
       <h3>Matchmaking Values Distribution:</h3>
@@ -318,10 +386,24 @@
         {/each}
       </ul>
     </div>
+    <div class="card">
+      <h2>Matchmaking Results (Linear Greedy)</h2>
+      <p>Reward Value: {data.data[2].lin_greedy_reward}</p>
+      <h3>Matchmaking Values Distribution:</h3>
+      <ul>
+        {#each Object.entries(countUniqueValues(data.data[2].lin_greedy)) as [value, count]}
+          <li>{value} appeared {count} times</li>
+        {/each}
+      </ul>
+    </div>
+    
   {:else}
     <p>No data available. Please complete the survey.</p>
   {/if}
 </div>
+
+
+
 <style>
   .bod {
     padding: 0 50px;
@@ -343,7 +425,15 @@
     margin-top: 20px;
   }
   .card-ts {
-    background-color: rgb(255, 172, 18);
+    background-color: rgb(255, 140, 0);
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  .card-lg {
+    background-color: rgb(0, 219, 113);
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 8px;

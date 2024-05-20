@@ -173,7 +173,7 @@
     <h2>Guidelines 📝</h2>
     <p style="padding: 0 6vw; font-size:18px; line-height: 2;">Selamat datang pada survey research matchmaking murid dan guru berdasarkan personalitas dengan memanfaatkan multi armed bandit 🙌. Disini anda akan diminta untuk mengisi survey kepribadian sejujur jujurnya. Prosedur yang akan dilalui adalah: <br> <b>Mengisi survey personalitas -> Program akan mendapatkan pasangan guru untuk anda -> memberikan feedback terhadap program.</b></p>
     <p style="padding: 0 6vw; font-size:18px; line-height: 2;">Adapun hal yang anda perlu ketahui lebih lanjut adalah: data anda akan diambil demi penelitian lebih lanjut. Apabila anda tidak berkenan untuk memberikan data anda kepada kami maka anda dapat menyamarkan nama anda. Karena keterbatasan data yang dapat diolah oleh perangkat komputasi peneliti maka fokus pada survey ini adalah mengetahui apakah masalah <b>cold start</b> dapat diselesaikan dengan impelentasi Multi Armed Bandits. <b>Jadi jika anda mendapatkan guru meskipun tidak terlalu sesuai personalitasnya maka program akan dianggap berhasil, jika personalitas sesuai dengan guru maka hal tersebut adalah nilai tambah bagi program.</b> Akan ada hadiah jika anda beruntung saat mengerjakan survey ini! <br>Program dibuat menggunakan:</p>
-    <img src="https://github.com/SAWARATSUKI/ServiceLogos/blob/main/Python/Python.png?raw=true" width="200px">
+    <b>Python, MAB, SVELTE</b>
     <p>Selamat mengerjakan</p>   
     <hr>
     <h1>1. Data diri</h1>
